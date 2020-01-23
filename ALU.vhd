@@ -3,53 +3,50 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity RegisterFile is
+entity ALU is
   PORT (
     clk : IN STD_LOGIC;
-    wea : IN STD_LOGIC;
-    increment: IN STD_LOGIC;
-    addra : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     enb : IN STD_LOGIC;
-    addrb : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    doutb : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-    reset: IN std_logic
+    R1 : IN STD_LOGIC_VECTOR(31 downto 0);
+    R2 : IN STD_LOGIC_VECTOR(31 downto 0);
+    mode : IN STD_LOGIC_VECTOR(1 downto 0);
+ 	O1: OUT STD_LOGIC_VECTOR(31 downto 0)
   );
-end RegisterFile;
+end ALU;
 
-architecture Behavioral of RegisterFile is
-	-- Reserve address 31 for the program counter.
-	-- Every time a '1' on increment is observed 
-	-- on the rising edge of the clock, increment  
-	-- memory(31) by 1. Reset sets it back to 0.
-	--		Confirm syntax in lab. 
 
-	type Memory_type is array (0 to 31) of std_logic_vector (31 downto 0);
-	signal Memory_array : Memory_type;
-	signal address : unsigned (15 downto 0);
-	constant one: std_logic_vector(31 downto 0) := (0 => '1', others => '0');
+	--Mode encoding:
+	--0 - add
+	--1 - sub
+	--2 - sll
+	--3 - srl
+	--Before output is changed enb must be set to one. 
+	--In the next clock cycle, the output is changed.
 
+architecture Behavioral of ALU is
+	signal shamt : integer := 0;
+	signal mode0 : std_logic_vector(31 downto 0) := (others => '0');
+	signal mode1 : std_logic_vector(31 downto 0) := (0 => '1', others => '0');
+    signal mode2 : std_logic_vector(31 downto 0) := (1 => '1', others => '0');
+    signal mode3 : std_logic_vector(31 downto 0) := (0 => '1', 1 => '1', others => '0');
+            
+	signal zero: std_logic_vector(31 downto 0) := (others => '0');
 begin
-	doutb <= Memory_array (to_integer(address));
 	process (clk)
 	begin
-	    if rising_edge(clk) then    
-	        if (enb = '1') then
-	            address <= unsigned(addrb);    
-	        end if;	
-
-	        if(increment = '1') then
-	        	Memory_array(31) <= Memory_array(31) + one;
-	        end if;
-
-			if(reset = '1') then 
-				Memory_array(31) <= "00000000";
+		if rising_edge(clk) then	
+			if(enb = '1') then
+				if(mode = mode0) then 
+					O1 <= R1 + R2;
+				elsif(mode = mode1) then 	
+					O1 <= R1 - R2;
+				elsif(mode = mode2) then 
+				-- Fill these modes after confirming syntactical issues in Lab.
+					O1 <= R1(31 - (to_integer(unsigned(R2))) downto 0 ) & zero( (to_integer(unsigned(R2)) - 1) downto 0);
+				else
+					O1 <= zero( (to_integer(unsigned(R2)) - 1) downto 0) & R1(31 downto (to_integer(unsigned(R2))) );
+				end if;
 			end if;
-
-			if (wea = '1') then
-					Memory_array (to_integer(unsigned(addra))) <= dina;	
-		    end if;
-
 		end if;
 	end process;
 end Behavioral;
