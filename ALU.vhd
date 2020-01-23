@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+use IEEE.numeric_std.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity ALU is
   PORT (
@@ -33,7 +34,7 @@ begin
 					O1 <= R1 + R2;
 				elsif(mode = "01") then 	
 					O1 <= R1 - R2;
-				else if(mode = "10") then 
+				elsif(mode = "10") then 
 				-- Fill these modes after confirming syntactical issues in Lab.
 					O1 <= "00";
 				else
