@@ -25,12 +25,12 @@ end ALU;
 
 architecture Behavioral of ALU is
 	signal shamt : integer := 0;
-	signal mode0 : std_logic_vector(31 downto 0) := (others => '0');
-	signal mode1 : std_logic_vector(31 downto 0) := (0 => '1', others => '0');
-    signal mode2 : std_logic_vector(31 downto 0) := (1 => '1', others => '0');
-    signal mode3 : std_logic_vector(31 downto 0) := (0 => '1', 1 => '1', others => '0');
+	constant mode0 : std_logic_vector(31 downto 0) := (others => '0');
+	constant mode1 : std_logic_vector(31 downto 0) := (0 => '1', others => '0');
+    constant mode2 : std_logic_vector(31 downto 0) := (1 => '1', others => '0');
+    constant mode3 : std_logic_vector(31 downto 0) := (0 => '1', 1 => '1', others => '0');
             
-	signal zero: std_logic_vector(31 downto 0) := (others => '0');
+	constant zero: std_logic_vector(31 downto 0) := (others => '0');
 begin
 	process (clk)
 	begin
