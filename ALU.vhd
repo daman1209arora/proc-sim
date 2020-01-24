@@ -25,10 +25,10 @@ end ALU;
 
 architecture Behavioral of ALU is
 	signal shamt : integer := 0;
-	constant mode0 : std_logic_vector(31 downto 0) := (others => '0');
-	constant mode1 : std_logic_vector(31 downto 0) := (0 => '1', others => '0');
-    constant mode2 : std_logic_vector(31 downto 0) := (1 => '1', others => '0');
-    constant mode3 : std_logic_vector(31 downto 0) := (0 => '1', 1 => '1', others => '0');
+	constant mode0 : std_logic_vector(1 downto 0) := "00";
+	constant mode1 : std_logic_vector(1 downto 0) := "01";
+    constant mode2 : std_logic_vector(1 downto 0) := "10";
+    constant mode3 : std_logic_vector(1 downto 0) := "11";
             
 	constant zero: std_logic_vector(31 downto 0) := (others => '0');
 begin
@@ -41,7 +41,6 @@ begin
 				elsif(mode = mode1) then 	
 					O1 <= R1 - R2;
 				elsif(mode = mode2) then 
-				-- Fill these modes after confirming syntactical issues in Lab.
 					O1 <= R1(31 - (to_integer(unsigned(R2))) downto 0 ) & zero( (to_integer(unsigned(R2)) - 1) downto 0);
 				else
 					O1 <= zero( (to_integer(unsigned(R2)) - 1) downto 0) & R1(31 downto (to_integer(unsigned(R2))) );
