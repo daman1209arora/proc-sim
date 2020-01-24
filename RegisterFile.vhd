@@ -6,25 +6,32 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity RegisterFile is
   PORT (
     clk : IN STD_LOGIC;
-    wea : IN STD_LOGIC;
-    addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-    dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    wea1 : IN STD_LOGIC;
+    addra1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+    dina1 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    
+    wea2: IN STD_LOGIC;
+    addra2: IN STD_LOGIC_VECTOR(4 downto 0);
+    dina2 : IN STD_LOGIC_VECTOR(31 downto 0);
+    
     
     enb : IN STD_LOGIC;
-    addrb1 : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+    addrb1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
     doutb1 : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
     
-    addrb2 : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+    addrb2 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
     doutb2 : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
   );
 end RegisterFile;
 
 architecture Behavioral of RegisterFile is
 
-	type Memory_type is array (0 to 31) of std_logic_vector (31 downto 0);
-	signal Memory_array : Memory_type;
-	signal address1 : unsigned (7 downto 0);
-    signal address2 : unsigned (7 downto 0);
+	type Memory_type is array (0 to 31) of std_logic_vector (31 downto 0) ;
+	signal Memory_array : Memory_type := (0 => "00000000000000000000000000000010",
+	                                       1 =>  "00000000000000000000000000000101",
+	                                       others => "00000000000000000000000000000000");
+	signal address1 : unsigned (4 downto 0);
+    signal address2 : unsigned (4 downto 0);
 
 begin
 	doutb2 <= Memory_array (to_integer(address2));
@@ -39,10 +46,13 @@ begin
 	            address1 <= unsigned(addrb1);    
 	        end if;	
 
-			if (wea = '1') then
-                Memory_array (to_integer(unsigned(addra))) <= dina;	
+			if (wea1 = '1') then
+                Memory_array (to_integer(unsigned(addra1))) <= dina1;   	
 		    end if;
-
+            
+            if (wea1 = '1') then
+                Memory_array (to_integer(unsigned(addra2))) <= dina2;       
+            end if;
 		end if;
 	end process;
 end Behavioral;
